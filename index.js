@@ -1,10 +1,11 @@
 import express, { response } from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+dotenv.config()
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import helmet from "helmet"
-dotenv.config()
+import connectDB from './config/connectDB.js'
 
 const app = express()
 app.use(cors(
@@ -31,6 +32,9 @@ app.get("/",(request, response)=>{
     })
 })
 
-app.listen(PORT, ()=>{
-    console.log("Server is running", PORT)
+connectDB().then(()=>{
+    app.listen(PORT, ()=>{
+        console.log("Server is running", PORT)
+    })
 })
+
