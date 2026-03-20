@@ -1,6 +1,7 @@
 import sendEmail from '../config/sendEmail.js'
 import UserModel from '../models/user_model.js'
 import bcryptjs from 'bcryptjs'
+import verifyEmailTemplate from '../utils/verifyEmailTemplate.js'
 
 export async function registerUserController(request,response) {
     try {
@@ -36,10 +37,22 @@ export async function registerUserController(request,response) {
     const newUser = new UserModel(payload)
     const save = await newUser.save()
 
+    const VerifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${save?._id}`
+
     const verifyEmail = await sendEmail({
         sendTo : email,
-        subject : "Verify email from binkeyit"
- 
+        subject : "Verify email from binkeyit",
+        html : verifyEmailTemplate({
+            name,
+            url : VerifyEmailUrl
+        })
+    })
+
+    return response.json({
+        message : "User register successfully",
+        error : false,
+        success : true,
+        data : save
     })
 
     } catch (error){
