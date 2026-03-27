@@ -4,6 +4,7 @@ import bcryptjs from 'bcryptjs'
 import verifyEmailTemplate from '../utils/verifyEmailTemplate.js'
 import generatedAccessToken from '../utils/generatedAccessToken.js'
 import generatedRefreshToken from '../utils/generatedRefreshToken.js'
+import uploadImageClodinary from '../utils/uploadimageClodinary.js'
 
 export async function registerUserController(request,response) {
     try {
@@ -199,5 +200,40 @@ export async function logoutController(request,response) {
             error : true,
             success : false
         })
+    }
+}
+
+//upload user avatar
+export async function uploadAvatar(request, response) {
+    try {
+        const userId = request.userId; 
+        const image = request.file;
+
+        if (!image) {
+            return response.status(400).json({ message: "Please upload an image" });
+        }
+
+        const upload = await uploadImageClodinary(image);
+
+        const updateUser = await UserModel.findByIdAndUpdate(userId, {
+            avatar: upload.secure_url 
+        }, { returnDocument: 'after' }); 
+
+        return response.json({
+            message: "Profile picture uploaded successfully",
+            error: false,
+            success: true,
+            data: {
+                _id: userId,
+                avatar: upload.secure_url
+            }
+        });
+
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
     }
 }
