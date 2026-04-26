@@ -1,2 +1,20 @@
-node_modules
+
+
+# Dependencies
+node_modules/
+client/node_modules/
+backend/node_modules/
+
+# Production builds
+dist/
+client/dist/
+build/
+
+# Environment files
 .env
+backend/.env
+client/.env
+
+# Editor files
+.vscode/
+.DS_Store
